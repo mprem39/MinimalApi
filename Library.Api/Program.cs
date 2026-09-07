@@ -4,6 +4,7 @@ using Library.Api;
 using Library.Api.Auth;
 using Library.Api.Data;
 using Library.Api.Endpoints;
+using Library.Api.Endpoints.Internal;
 using Library.Api.Models;
 using Library.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +42,7 @@ builder.Services.AddSingleton<IDbConnectionFactory>(sp =>
     return new SqliteConnectionFactory(connectionString);
 });
 builder.Services.AddSingleton<DatabaseInitializer>();
-builder.Services.AddLibraryEndpoints();
+builder.Services.AddEndpoints<Program>(builder.Configuration);
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Configuration.AddJsonFile("appsettings.Local.json", true, true);
 builder.Services.AddAuthentication(ApiKeySchemeConstants.SchemeName)
@@ -57,9 +58,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors();
 
-app.UseLibraryEndpoints();
-
-
+app.UseEndpoints<Program>();
 
 //DB init 
 var dbInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
